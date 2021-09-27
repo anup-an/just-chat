@@ -4,7 +4,10 @@
 
 # Xcode
 #
-src/firebase
+android/
+*.hprof
+src/firebase/
+*config.ts
 node_modules
 build/
 *.pbxuser
