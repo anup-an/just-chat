@@ -9,6 +9,7 @@
 import React from 'react';
 import type {Node} from 'react';
 import NavRoutes from './src/navigation';
+import {AppContextProvider} from './src/context';
 
 /* import {
   Colors,
@@ -46,7 +47,11 @@ import NavRoutes from './src/navigation';
  */
 
 const App: () => Node = () => {
-  return <NavRoutes />;
+  return (
+    <AppContextProvider>
+      <NavRoutes />
+    </AppContextProvider>
+  );
 };
 
 /* const styles = StyleSheet.create({
