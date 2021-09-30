@@ -5,10 +5,22 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../utility/colors';
 import {useNavigation} from '@react-navigation/core';
 import {UserContext} from '../../context';
+import {getAuth, signOut} from 'firebase/auth';
+import firebase from '../../firebase/config';
 
-const Header = () => {
+const Header: React.FC = () => {
   const navigation = useNavigation();
   const {user} = useContext(UserContext);
+  const handleLogOut = async () => {
+    const auth = getAuth(firebase);
+    signOut(auth)
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        alert(error);
+      });
+  };
   return (
     <View>
       <View style={styles.userImage}>
@@ -29,7 +41,7 @@ const Header = () => {
           </View>
         </View>
 
-        <Text onPress={() => navigation.navigate('Home')}>
+        <Text onPress={handleLogOut}>
           <Icon name="logout" size={30} color={colors.BUTTON_COLOR} />
         </Text>
       </View>

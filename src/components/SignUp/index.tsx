@@ -1,13 +1,19 @@
 import {useNavigation} from '@react-navigation/core';
-import React from 'react';
+import firebase from '../../firebase/config';
+import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import {getDatabase, ref, set} from 'firebase/database';
+
+import React, {useContext} from 'react';
 import {useState} from 'react';
 import {View, SafeAreaView, Text} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {styles} from '../../utility/styles';
 import Logo from '../Home/Logo';
+import {UserContext} from '../../context';
 
 const SignUp = () => {
   const navigation = useNavigation();
+  const {logInUser} = useContext(UserContext);
   const [registerDetails, SetRegisterDetails] = useState({
     email: '',
     password: '',
@@ -21,16 +27,44 @@ const SignUp = () => {
     });
   };
 
-  const handleSignUp = () => {
+  const createUser = async (email, password, retypePassword) => {
+    const auth = getAuth(firebase);
+    const db = getDatabase(firebase);
+
+    if (password === retypePassword) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(res => {
+          if (res) {
+            const userId = auth.currentUser.uid;
+
+            set(ref(db, 'users/' + userId), {
+              email: email,
+              password: password,
+            });
+            logInUser({
+              uid: auth.currentUser.uid,
+              email: auth.currentUser.email,
+            });
+            navigation.navigate('User');
+          }
+        })
+        .catch(err => alert(err));
+    } else {
+      alert('Passwords do not match. Type again');
+    }
+  };
+
+  const handleSignUp: React.FC = () => {
     if (email === '') {
       alert('E-mail is required');
     } else if (password === '') {
       alert('Password is required');
     } else if (retypePassword === '') {
       alert('Retype password required');
+    } else if (password !== retypePassword) {
+      alert('Passwords do not match. Type again.');
     } else {
-      //    TODO post request to server and then redirect to user page
-      navigation.navigate('User');
+      createUser(email, password, retypePassword);
     }
   };
 

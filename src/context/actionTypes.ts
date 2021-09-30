@@ -10,8 +10,6 @@ export type Action = {
 };
 
 export interface IUser {
+  uid: string;
   email: string;
-  password: string;
-  image: '';
-  friendsList: [];
 }

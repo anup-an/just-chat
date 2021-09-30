@@ -1,11 +1,28 @@
 import {useNavigation} from '@react-navigation/core';
-import React from 'react';
+import React, {useEffect, useContext} from 'react';
 import {SafeAreaView, View, Text} from 'react-native';
+import {getAuth, onAuthStateChanged} from 'firebase/auth';
+import firebase from '../../firebase/config';
 import {styles} from '../../utility/styles';
 import Logo from './Logo';
+import {UserContext} from '../../context';
 
-const Home = () => {
+const Home: React.FC = () => {
   const navigation = useNavigation();
+  const auth = getAuth(firebase);
+  const {logInUser} = useContext(UserContext);
+  useEffect(() => {
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        logInUser({uid: user.uid, email: user.email});
+        console.log(user);
+        navigation.navigate('User');
+      } else {
+        console.log('user is signed out');
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
   return (
     <SafeAreaView style={styles.container}>
       <Logo />

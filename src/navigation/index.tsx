@@ -16,7 +16,7 @@ import BackButton from '../ui/BackButton';
 
 const Stack = createStackNavigator();
 
-const NavRoutes = () => {
+const NavRoutes: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator

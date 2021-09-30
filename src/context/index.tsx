@@ -22,29 +22,34 @@ const userReducer = (state = initialState, action: Action) => {
 
 const initialState: IUser = {
   user: {
+    uid: '',
     email: '',
-    password: '',
-    image: '',
-    friendsList: [],
   },
 };
 
 export const AppContextProvider: React.FC = ({children}) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
-  const logInUser = user => {
-    //TODO firebase login
-    const loggedUser: IUser = {...user};
+  const logInUser = (user: IUser) => {
     dispatch({
       type: 'LOGIN_USER',
       payload: {
-        user: loggedUser,
+        user: user,
+      },
+    });
+  };
+
+  const signUpUser = (user: IUser) => {
+    dispatch({
+      type: 'SIGNUP_USER',
+      payload: {
+        user: user,
       },
     });
   };
 
   return (
-    <UserContext.Provider value={{user: state.user, logInUser}}>
+    <UserContext.Provider value={{user: state.user, logInUser, signUpUser}}>
       {children}
     </UserContext.Provider>
   );
