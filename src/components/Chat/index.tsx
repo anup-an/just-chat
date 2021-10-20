@@ -1,88 +1,88 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useContext, useLayoutEffect, useState} from 'react';
+import {View} from 'react-native';
+import {useRoute, RouteProp} from '@react-navigation/native';
+import {getDatabase, ref, onValue} from 'firebase/database';
+import firebase from '../../firebase/config';
+import {UserContext} from '../../context';
 import {colors} from '../../utility/colors';
 import {styles} from '../../utility/styles';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import ChatBox from './ChatBox';
+import Message from './Message';
+import {IMessage} from '../../context/actionTypes';
 
-const Chat = ({route}) => {
-  const {name} = route.params;
+const Chat = () => {
+  const route: RouteProp<
+    {params: {receiverId: string; name: string}},
+    'params'
+  > = useRoute();
+  {
+    console.log(route.params);
+  }
+  const {user} = useContext(UserContext);
+  const [allMessages, setAllMessages] = useState<IMessage[]>([]);
+
+  useLayoutEffect(() => {
+    (async () => {
+      try {
+        const db = getDatabase(firebase);
+        const messagesRef = ref(db, 'messages/');
+        const messages: IMessage[] = [];
+
+        await onValue(messagesRef, snapshot => {
+          const messageObject = snapshot.val()[user.uid];
+          for (let key in messageObject) {
+            if (
+              messageObject[key].sender === route.params.receiverId ||
+              messageObject[key].receiver === route.params.receiverId
+            ) {
+              messages.push({
+                message: messageObject[key].message,
+                sender: messageObject[key].sender,
+                receiver: messageObject[key].receiver,
+                status: messageObject[key].status,
+              });
+            }
+          }
+        });
+        setTimeout(() => {
+          console.log(messages);
+          setAllMessages([...messages]);
+        }, 1000);
+      } catch (err) {
+        throw new Error('Messages not loaded from server');
+      }
+    })();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View
         style={{
           backgroundColor: 'white',
           marginTop: 10,
-          height: '87%',
+          height: '67%',
           borderTopRightRadius: 20,
           borderTopLeftRadius: 20,
-          textAlign: 'right',
           flexDirection: 'column',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
         }}>
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'flex-end',
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                borderWidth: 1,
-                borderTopRightRadius: 8,
-                borderTopLeftRadius: 8,
-                borderBottomLeftRadius: 8,
-                textAlign: 'right',
-                padding: 4,
-                marginBottom: 20,
-                backgroundColor: colors.HEADER_BACKGROUND_COLOR,
-              }}>
-              You: Hi, how are you ?
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                borderWidth: 1,
-                borderTopRightRadius: 8,
-                borderTopLeftRadius: 8,
-                borderBottomLeftRadius: 8,
-                textAlign: 'right',
-                padding: 4,
-                marginBottom: 20,
-                backgroundColor: colors.BUTTON_COLOR,
-                color: 'white',
-              }}>
-              {name}: Good. How are you ?
-            </Text>
-          </View>
-        </View>
-        <View
-          style={{
-            backgroundColor: colors.HEADER_BACKGROUND_COLOR,
-          }}>
-          <View
-            style={[
-              styles.justifyBetween,
-              styles.searchBorder,
-              styles.whiteBackground,
-            ]}>
-            <TextInput editable maxLength={40} placeholder="Send message" />
-            <View style={[styles.searchButton, styles.buttonColor]}>
-              <Text>
-                <Icon name="send" size={20} color="white" />
-              </Text>
-            </View>
-          </View>
-        </View>
+        {allMessages.map(message =>
+          message.status === 'sent' ? (
+            <Message status="sent" message={message.message} />
+          ) : (
+            <Message status="received" message={message.message} />
+          ),
+        )}
+      </View>
+      <View
+        style={{
+          backgroundColor: colors.HEADER_BACKGROUND_COLOR,
+        }}>
+        <ChatBox
+          currentUserId={user.uid}
+          receiverId={route.params.receiverId}
+        />
       </View>
     </View>
   );

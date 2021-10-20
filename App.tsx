@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
+//import type { Node} from 'react';
 import NavRoutes from './src/navigation';
 import {AppContextProvider} from './src/context';
 
@@ -46,7 +46,7 @@ import {AppContextProvider} from './src/context';
 };
  */
 
-const App: () => Node = () => {
+const App = () => {
   return (
     <AppContextProvider>
       <NavRoutes />

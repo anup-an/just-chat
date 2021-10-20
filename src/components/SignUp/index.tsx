@@ -1,6 +1,8 @@
 import {useNavigation} from '@react-navigation/core';
 import firebase from '../../firebase/config';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 import {getDatabase, ref, set} from 'firebase/database';
 
 import React, {useContext} from 'react';
@@ -12,7 +14,7 @@ import Logo from '../Home/Logo';
 import {UserContext} from '../../context';
 
 const SignUp = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any, any>>();
   const {logInUser} = useContext(UserContext);
   const [registerDetails, SetRegisterDetails] = useState({
     email: '',
@@ -27,7 +29,11 @@ const SignUp = () => {
     });
   };
 
-  const createUser = async (email, password, retypePassword) => {
+  const createUser = async (
+    email: string,
+    password: string,
+    retypePassword: string,
+  ) => {
     const auth = getAuth(firebase);
     const db = getDatabase(firebase);
 
@@ -35,34 +41,39 @@ const SignUp = () => {
       createUserWithEmailAndPassword(auth, email, password)
         .then(res => {
           if (res) {
-            const userId = auth.currentUser.uid;
+            const userId = auth?.currentUser?.uid;
 
             set(ref(db, 'users/' + userId), {
               email: email,
-              password: password,
+              uid: auth?.currentUser?.uid,
+              messages: [{sender: '', receiver: '', message: ''}],
             });
-            logInUser({
-              uid: auth.currentUser.uid,
-              email: auth.currentUser.email,
-            });
+            userId && email
+              ? logInUser({
+                  uid: userId,
+                  email: email,
+                })
+              : new Error('User not created');
             navigation.navigate('User');
           }
         })
-        .catch(err => alert(err));
+        .catch(err => {
+          throw new Error(err);
+        });
     } else {
-      alert('Passwords do not match. Type again');
+      throw new Error('Passwords do not match. Type again');
     }
   };
 
-  const handleSignUp: React.FC = () => {
+  const handleSignUp = () => {
     if (email === '') {
-      alert('E-mail is required');
+      throw new Error('E-mail is required');
     } else if (password === '') {
-      alert('Password is required');
+      throw new Error('Password is required');
     } else if (retypePassword === '') {
-      alert('Retype password required');
+      throw new Error('Retype password required');
     } else if (password !== retypePassword) {
-      alert('Passwords do not match. Type again.');
+      throw new Error('Passwords do not match. Type again.');
     } else {
       createUser(email, password, retypePassword);
     }
@@ -109,7 +120,6 @@ const SignUp = () => {
           placeholder="E-mail"
           value={email}
           onChangeText={text => handleInput(text, 'email')}
-          required
         />
         <TextInput
           style={styles.inputStyle}
@@ -118,7 +128,6 @@ const SignUp = () => {
           placeholder="Password"
           value={password}
           onChangeText={text => handleInput(text, 'password')}
-          required
         />
         <TextInput
           style={styles.inputStyle}
@@ -127,7 +136,6 @@ const SignUp = () => {
           placeholder="Confirm password"
           value={retypePassword}
           onChangeText={text => handleInput(text, 'retypePassword')}
-          required
         />
         <View style={styles.button}>
           <Text style={styles.buttonText} onPress={handleSignUp}>

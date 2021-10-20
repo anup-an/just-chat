@@ -13,3 +13,10 @@ export interface IUser {
   uid: string;
   email: string;
 }
+
+export interface IMessage {
+  sender: string;
+  receiver: string;
+  message: string;
+  status: string;
+}

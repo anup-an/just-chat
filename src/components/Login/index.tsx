@@ -1,51 +1,57 @@
+/* eslint-disable no-alert */
 import {useNavigation} from '@react-navigation/core';
 import React from 'react';
 import {useState, useContext} from 'react';
 import {View, SafeAreaView, Text} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 import firebase from '../../firebase/config';
 
 import {UserContext} from '../../context';
-import {IUser} from '../../context/actionTypes';
 import {styles} from '../../utility/styles';
 import Logo from '../Home/Logo';
 
 const Login = () => {
   const {logInUser} = useContext(UserContext);
-  const [credentials, setCredentials] = useState<IUser>({
+  const [credentials, setCredentials] = useState({
     email: '',
     password: '',
   });
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any, any>>();
 
   const handleInput = (text: string, name: string) => {
     setCredentials({...credentials, [name]: text});
   };
 
-  const signInUser = async (email, password) => {
+  const signInUser = async (email: string, password: string) => {
     const auth = getAuth(firebase);
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         // Signed in
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const loggedUser = userCredential.user;
-        logInUser({uid: loggedUser.uid, email: loggedUser.email});
+        loggedUser && email
+          ? logInUser({
+              uid: loggedUser.uid,
+              email: email,
+            })
+          : new Error('User not logged in. Please try again.');
         navigation.navigate('User');
 
         // ...
       })
       .catch(error => {
         const errorMessage = error.message;
-        alert(errorMessage);
+        throw new Error(errorMessage);
       });
   };
   const handleLogin = () => {
     const {email, password} = credentials;
     if (email === '') {
-      alert('E-mail is required');
+      throw new Error('Email is required');
     } else if (password === '') {
-      alert('Password is required');
+      throw new Error('Password is required');
     } else {
       signInUser(email, password);
     }

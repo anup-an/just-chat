@@ -1,4 +1,5 @@
 import {useNavigation} from '@react-navigation/core';
+import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useEffect, useContext} from 'react';
 import {SafeAreaView, View, Text} from 'react-native';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
@@ -8,14 +9,13 @@ import Logo from './Logo';
 import {UserContext} from '../../context';
 
 const Home: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any, any>>();
   const auth = getAuth(firebase);
   const {logInUser} = useContext(UserContext);
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {
         logInUser({uid: user.uid, email: user.email});
-        console.log(user);
         navigation.navigate('User');
       } else {
         console.log('user is signed out');
