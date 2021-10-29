@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   const {logInUser} = useContext(UserContext);
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      if (user) {
+      if (user && user.email) {
         logInUser({uid: user.uid, email: user.email});
         navigation.navigate('User');
       } else {

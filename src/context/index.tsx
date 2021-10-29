@@ -17,7 +17,6 @@ const initialState: IInitialStates = {
   user: {
     uid: '',
     email: '',
-    messages: [],
   },
   logInUser: (_user: IUser) => {},
   signUpUser: (_user: IUser) => {},
