@@ -110,6 +110,9 @@ export const styles = StyleSheet.create({
   whiteBackground: {
     backgroundColor: 'white',
   },
+  orangeBackground: {
+    backgroundColor: colors.HEADER_BACKGROUND_COLOR,
+  },
   smallButton: {
     backgroundColor: colors.BUTTON_COLOR,
     color: 'white',

@@ -11,6 +11,7 @@ import UsersList from './UsersList';
 import {getAuth} from 'firebase/auth';
 import FriendsList from './FriendsList';
 import RequestList from './RequestList';
+import {View} from 'react-native';
 
 const List: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any, any>>();
@@ -108,29 +109,13 @@ const List: React.FC = () => {
     navigation.navigate('Chat', {receiverId: key, name: name});
   };
   return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="All"
-        children={() => (
-          <UsersList
-            users={allUsers}
-            sentRequests={sentRequests}
-            receivedRequests={receivedRequests}
-            addFriend={addFriend}
-          />
-        )}
-      />
-      <Tab.Screen
-        name="Friends"
-        children={() => (
-          <FriendsList users={allUsers} navigateToChat={navigateToChat} />
-        )}
-      />
-      <Tab.Screen
-        name="Requests"
-        children={() => <RequestList receivedRequests={receivedRequests} />}
-      />
-    </Tab.Navigator>
+    <UsersList
+      users={allUsers}
+      sentRequests={sentRequests}
+      receivedRequests={receivedRequests}
+      addFriend={addFriend}
+      navigateToChat={navigateToChat}
+    />
   );
 };
 
