@@ -36,17 +36,18 @@ const SignUp = () => {
   ) => {
     const auth = getAuth(firebase);
     const db = getDatabase(firebase);
-
+    console.log('signup process started');
     if (password === retypePassword) {
       createUserWithEmailAndPassword(auth, email, password)
         .then(res => {
           if (res) {
             const userId = auth?.currentUser?.uid;
+            const friends: string[] = [];
 
             set(ref(db, 'users/' + userId), {
               email: email,
               uid: auth?.currentUser?.uid,
-              messages: [{sender: '', receiver: '', message: ''}],
+              friends: [],
             });
             userId && email
               ? logInUser({
@@ -60,6 +61,7 @@ const SignUp = () => {
         .catch(err => {
           throw new Error(err);
         });
+      console.log('signup process ended');
     } else {
       throw new Error('Passwords do not match. Type again');
     }

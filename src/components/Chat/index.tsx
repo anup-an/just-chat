@@ -30,18 +30,22 @@ const Chat = () => {
         const messages: IMessage[] = [];
 
         await onValue(messagesRef, snapshot => {
-          const messageObject = snapshot.val()[user.uid];
-          for (let key in messageObject) {
-            if (
-              messageObject[key].sender === route.params.receiverId ||
-              messageObject[key].receiver === route.params.receiverId
-            ) {
-              messages.push({
-                message: messageObject[key].message,
-                sender: messageObject[key].sender,
-                receiver: messageObject[key].receiver,
-                status: messageObject[key].status,
-              });
+          if (snapshot.val()) {
+            const messageObject = snapshot.val()[user.uid];
+            if (messageObject) {
+              for (let key in messageObject) {
+                if (
+                  messageObject[key].sender === route.params.receiverId ||
+                  messageObject[key].receiver === route.params.receiverId
+                ) {
+                  messages.push({
+                    message: messageObject[key].message,
+                    sender: messageObject[key].sender,
+                    receiver: messageObject[key].receiver,
+                    status: messageObject[key].status,
+                  });
+                }
+              }
             }
           }
         });

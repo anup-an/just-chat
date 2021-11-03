@@ -15,7 +15,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user && user.email) {
-        logInUser({uid: user.uid, email: user.email});
+        //logInUser({uid: user.uid, email: user.email});
         navigation.navigate('User');
       } else {
         console.log('user is signed out');

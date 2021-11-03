@@ -110,4 +110,14 @@ export const styles = StyleSheet.create({
   whiteBackground: {
     backgroundColor: 'white',
   },
+  smallButton: {
+    backgroundColor: colors.BUTTON_COLOR,
+    color: 'white',
+    textAlign: 'center',
+    paddingLeft: 4,
+    paddingRight: 4,
+    paddingBottom: 2,
+    paddingTop: 2,
+    borderRadius: 6,
+  },
 });

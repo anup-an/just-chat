@@ -20,3 +20,11 @@ export interface IMessage {
   message: string;
   status: string;
 }
+
+export interface FriendRequest {
+  sender: string;
+  receiver: string;
+  senderEmail: string;
+  receiverEmail: string;
+  status: string;
+}
