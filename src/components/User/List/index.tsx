@@ -2,47 +2,25 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {FriendRequest, IUser} from '../../../context/actionTypes';
-import {getDatabase, ref, onValue, push, set, update} from 'firebase/database';
+import {getDatabase, ref, onValue, push, set} from 'firebase/database';
 import firebase from '../../../firebase/config';
 import {UserContext} from '../../../context';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import UsersList from './UsersList';
 import {getAuth} from 'firebase/auth';
-import FriendsList from './FriendsList';
-import RequestList from './RequestList';
-import {View} from 'react-native';
 
-const List: React.FC = () => {
+interface ListProps {
+  allUsers: IUser[];
+}
+
+const List: React.FC<ListProps> = ({allUsers}) => {
   const navigation = useNavigation<StackNavigationProp<any, any>>();
   const {user} = useContext(UserContext);
-  const [allUsers, setAllUsers] = useState<IUser[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<FriendRequest[]>([]);
   const [sentRequests, setSentRequests] = useState<FriendRequest[]>([]);
 
   const Tab = createMaterialTopTabNavigator();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const db = getDatabase(firebase);
-        const usersRef = ref(db, 'users/');
-        const users: IUser[] = [];
-        onValue(usersRef, snapshot => {
-          snapshot.forEach(child => {
-            if (user.uid !== child.val().uid) {
-              users.push(child.val());
-            }
-          });
-        });
-        setTimeout(() => {
-          setAllUsers([...users]);
-        }, 100);
-      } catch (err) {
-        throw new Error('Unable to get data from server');
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {

@@ -7,6 +7,9 @@ import {colors} from '../../utility/colors';
 import {styles} from '../../utility/styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {launchCamera, MediaType} from 'react-native-image-picker';
+import DocumentPicker, {
+  DocumentPickerResponse,
+} from 'react-native-document-picker';
 
 interface IProps {
   currentUserId: string;
@@ -14,6 +17,8 @@ interface IProps {
 }
 const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
   const [message, setMessage] = useState<string>('');
+  const [pickedFiles, setPickedFiles] = useState<DocumentPickerResponse[]>([]);
+  const [clickedImage, setClickedImage] = useState('');
   const handleChangeText = (text: string) => {
     setMessage(text);
   };
@@ -56,9 +61,27 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
       } else if (response.didCancel) {
         console.log('User cancelled the process', response.didCancel);
       } else {
-        console.log(response.assets ? response.assets[0] : '');
+        if (response.assets) {
+          const image = [...response.assets][0].uri;
+
+          setClickedImage(image ? image : '');
+          handleSendMessage();
+        }
       }
     });
+  };
+
+  const handlePickFiles = async () => {
+    console.log('handle pick');
+    try {
+      const documents = await DocumentPicker.pickMultiple({
+        type: [DocumentPicker.types.allFiles],
+      });
+      setPickedFiles(documents);
+      handleSendMessage();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const saveMessage = async (userId: string) => {
@@ -72,6 +95,8 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
         receiver: receiverId,
         status: userId === currentUserId ? 'sent' : 'received',
         message: message,
+        image: clickedImage,
+        files: pickedFiles,
       });
     } catch (err) {
       throw new Error('Message not sent');
@@ -103,6 +128,7 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
             name="attachment"
             size={30}
             color={colors.PLACEHOLDER_TEXT_COLOR}
+            onPress={handlePickFiles}
           />
         </Text>
         <TouchableOpacity style={[styles.searchButton, styles.buttonColor]}>

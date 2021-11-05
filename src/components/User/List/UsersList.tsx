@@ -85,8 +85,11 @@ const UsersList: React.FC<UsersListProps> = ({
                 <Text> {item.name}</Text>
               </View>
             </View>
-            {receivedRequests.find(request => request.sender === item.key) ? (
+            {receivedRequests.find(request => request.sender === item.key) ||
+            sentRequests.find(request => request.receiver === item.key) ? (
               receivedRequests.find(request => request.sender === item.key)
+                ?.status === 'accepted' ||
+              sentRequests.find(request => request.receiver === item.key)
                 ?.status === 'accepted' ? (
                 <TouchableOpacity
                   onPress={() => navigateToChat(item.key, item.name)}>
@@ -94,13 +97,14 @@ const UsersList: React.FC<UsersListProps> = ({
                     Chat
                   </Text>
                 </TouchableOpacity>
-              ) : (
+              ) : receivedRequests.find(request => request.sender === item.key)
+                  ?.status === 'pending' ? (
                 <TouchableOpacity onPress={() => acceptRequest(item.key)}>
                   <Text style={styles.smallButton}>Accept</Text>
                 </TouchableOpacity>
+              ) : (
+                <Text>Request pending</Text>
               )
-            ) : sentRequests.find(request => request.receiver === item.key) ? (
-              <Text>Request pending</Text>
             ) : (
               <TouchableOpacity onPress={() => addFriend(item.key, item.name)}>
                 <Text style={styles.smallButton}>Add</Text>

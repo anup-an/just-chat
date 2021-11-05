@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/core';
 import {UserContext} from '../../context';
 import {getAuth, signOut} from 'firebase/auth';
 import firebase from '../../firebase/config';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {StackHeaderProps, StackNavigationProp} from '@react-navigation/stack';
 
 const Header: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any, any>>();

@@ -9,6 +9,15 @@ export type Action = {
   };
 };
 
+interface IFiles {
+  filename: string;
+  fileSize: string;
+  height: string;
+  type: string;
+  uri: string;
+  width: string;
+}
+
 export interface IUser {
   uid: string;
   email: string;
@@ -18,6 +27,8 @@ export interface IMessage {
   sender: string;
   receiver: string;
   message: string;
+  image: string;
+  files: IFiles[];
   status: string;
 }
 

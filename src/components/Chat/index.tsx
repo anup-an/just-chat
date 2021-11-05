@@ -40,6 +40,8 @@ const Chat = () => {
                 ) {
                   messages.push({
                     message: messageObject[key].message,
+                    image: messageObject[key].image,
+                    files: messageObject[key].files,
                     sender: messageObject[key].sender,
                     receiver: messageObject[key].receiver,
                     status: messageObject[key].status,
@@ -71,13 +73,27 @@ const Chat = () => {
           flexDirection: 'column',
           justifyContent: 'flex-end',
         }}>
-        {allMessages.map(message =>
-          message.status === 'sent' ? (
-            <Message status="sent" message={message.message} />
-          ) : (
-            <Message status="received" message={message.message} />
-          ),
-        )}
+        {allMessages.length !== 0
+          ? allMessages.map((message, index) =>
+              message.status === 'sent' ? (
+                <Message
+                  status="sent"
+                  message={message.message}
+                  image={message.image}
+                  files={message.files}
+                  key={message.sender + index}
+                />
+              ) : (
+                <Message
+                  status="received"
+                  message={message.message}
+                  image={message.image}
+                  files={message.files}
+                  key={message.receiver}
+                />
+              )
+            )
+          : null}
       </View>
       <View
         style={{

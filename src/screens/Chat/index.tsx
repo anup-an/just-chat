@@ -1,8 +1,8 @@
 import React from 'react';
 import Chat from '../../components/Chat';
 
-const ChatScreen = ({route}) => {
-  return <Chat route={route} />;
+const ChatScreen = () => {
+  return <Chat />;
 };
 
 export default ChatScreen;
