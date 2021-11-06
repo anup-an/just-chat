@@ -15,14 +15,14 @@ const Home: React.FC = () => {
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user && user.email) {
-        //logInUser({uid: user.uid, email: user.email});
+        logInUser({uid: user.uid, email: user.email});
         navigation.navigate('User');
       } else {
         console.log('user is signed out');
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigation]);
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <Logo />

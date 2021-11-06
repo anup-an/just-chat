@@ -21,10 +21,12 @@ const Chat = () => {
   }
   const {user} = useContext(UserContext);
   const [allMessages, setAllMessages] = useState<IMessage[]>([]);
+  const [message, setMessage] = useState<string>('');
 
   useLayoutEffect(() => {
     (async () => {
       try {
+        console.log('chat useeffect called');
         const db = getDatabase(firebase);
         const messagesRef = ref(db, 'messages/');
         const messages: IMessage[] = [];
@@ -41,7 +43,7 @@ const Chat = () => {
                   messages.push({
                     message: messageObject[key].message,
                     image: messageObject[key].image,
-                    files: messageObject[key].files,
+                    file: messageObject[key].file,
                     sender: messageObject[key].sender,
                     receiver: messageObject[key].receiver,
                     status: messageObject[key].status,
@@ -60,6 +62,10 @@ const Chat = () => {
       }
     })();
   }, []);
+
+  const handleChangeText = (text: string) => {
+    setMessage(text);
+  };
 
   return (
     <View style={styles.container}>
@@ -80,7 +86,7 @@ const Chat = () => {
                   status="sent"
                   message={message.message}
                   image={message.image}
-                  files={message.files}
+                  file={message.file}
                   key={message.sender + index}
                 />
               ) : (
@@ -88,7 +94,7 @@ const Chat = () => {
                   status="received"
                   message={message.message}
                   image={message.image}
-                  files={message.files}
+                  file={message.file}
                   key={message.receiver}
                 />
               )
@@ -102,6 +108,8 @@ const Chat = () => {
         <ChatBox
           currentUserId={user.uid}
           receiverId={route.params.receiverId}
+          handleChangeText={handleChangeText}
+          message={message}
         />
       </View>
     </View>

@@ -24,6 +24,7 @@ const User = () => {
   useEffect(() => {
     (async () => {
       try {
+        console.log(user);
         const db = getDatabase(firebase);
         const usersRef = ref(db, 'users/');
         const users: IUser[] = [];

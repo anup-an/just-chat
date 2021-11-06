@@ -11,6 +11,7 @@ interface IInitialStates {
   user: IUser;
   logInUser: (_user: IUser) => void;
   signUpUser: (_user: IUser) => void;
+  logOutUser: (_user: IUser) => void;
 }
 
 const initialState: IInitialStates = {
@@ -20,6 +21,7 @@ const initialState: IInitialStates = {
   },
   logInUser: (_user: IUser) => {},
   signUpUser: (_user: IUser) => {},
+  logOutUser: (_user: IUser) => {},
 };
 
 export const UserContext = createContext(initialState);
@@ -29,7 +31,7 @@ const userReducer = (state = initialState, action: Action) => {
     case LOGIN_USER:
       return {...state, user: {...action.payload.user}};
     case LOGOUT_USER:
-      return {...state, user: {...action.payload.user}};
+      return {...state, user: {...action.payload.user, uid: '', email: ''}};
     case SIGNUP_USER:
       return {...state, user: {...action.payload.user}};
   }
@@ -56,8 +58,18 @@ export const AppContextProvider: React.FC = ({children}) => {
     });
   };
 
+  const logOutUser = (user: IUser) => {
+    dispatch({
+      type: 'LOGOUT_USER',
+      payload: {
+        user: user,
+      },
+    });
+  };
+
   return (
-    <UserContext.Provider value={{user: state.user, logInUser, signUpUser}}>
+    <UserContext.Provider
+      value={{user: state.user, logInUser, signUpUser, logOutUser}}>
       {children}
     </UserContext.Provider>
   );

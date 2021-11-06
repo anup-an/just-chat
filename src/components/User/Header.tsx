@@ -7,15 +7,16 @@ import {useNavigation} from '@react-navigation/core';
 import {UserContext} from '../../context';
 import {getAuth, signOut} from 'firebase/auth';
 import firebase from '../../firebase/config';
-import {StackHeaderProps, StackNavigationProp} from '@react-navigation/stack';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 const Header: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any, any>>();
-  const {user} = useContext(UserContext);
+  const {user, logOutUser} = useContext(UserContext);
   const handleLogOut = async () => {
     const auth = getAuth(firebase);
     signOut(auth)
       .then(() => {
+        logOutUser(user);
         navigation.navigate('Home');
       })
       .catch(error => {

@@ -2,21 +2,13 @@ import React from 'react';
 import {Image, Text, View} from 'react-native';
 import {colors} from '../../utility/colors';
 
-interface IFiles {
-  filename: string;
-  fileSize: string;
-  height: string;
-  type: string;
-  uri: string;
-  width: string;
-}
 interface IMessageProps {
   status: string;
   message: string;
   image: string;
-  files: IFiles[];
+  file: string;
 }
-const Message: React.FC<IMessageProps> = ({status, message, image, files}) => {
+const Message: React.FC<IMessageProps> = ({status, message, image, file}) => {
   return (
     <View>
       {console.log('image uri', image)}
@@ -85,6 +77,41 @@ const Message: React.FC<IMessageProps> = ({status, message, image, files}) => {
           <Image
             source={{
               uri: image,
+            }}
+            style={{width: 100, height: 100}}
+            resizeMode={'cover'}
+          />
+        </View>
+      ) : null}
+      {console.log(file)}
+      {status === 'sent' && file !== '' ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-start',
+            padding: 10,
+          }}>
+          <Image
+            source={{
+              uri: file,
+            }}
+            style={{width: 100, height: 100}}
+            resizeMode={'cover'}
+          />
+        </View>
+      ) : null}
+      {status === 'received' && file !== '' ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+            padding: 10,
+          }}>
+          <Image
+            source={{
+              uri: file,
             }}
             style={{width: 100, height: 100}}
             resizeMode={'cover'}

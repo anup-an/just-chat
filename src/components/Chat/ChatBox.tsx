@@ -14,14 +14,17 @@ import DocumentPicker, {
 interface IProps {
   currentUserId: string;
   receiverId: string;
+  message: string;
+  handleChangeText: (text: string) => void;
 }
-const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
-  const [message, setMessage] = useState<string>('');
-  const [pickedFiles, setPickedFiles] = useState<DocumentPickerResponse[]>([]);
+const ChatBox: React.FC<IProps> = ({
+  currentUserId,
+  receiverId,
+  message,
+  handleChangeText,
+}) => {
+  const [pickedFile, setPickedFile] = useState('');
   const [clickedImage, setClickedImage] = useState('');
-  const handleChangeText = (text: string) => {
-    setMessage(text);
-  };
 
   type Options = {
     mediaType: MediaType;
@@ -38,10 +41,10 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       ]);
       const isCameraAuthorized = await PermissionsAndroid.check(
-        'android.permission.CAMERA',
+        'android.permission.CAMERA'
       );
       const isStorageAuthorized = await PermissionsAndroid.check(
-        'android.permission.WRITE_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE'
       );
 
       if (!isCameraAuthorized || !isStorageAuthorized) {
@@ -74,10 +77,10 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
   const handlePickFiles = async () => {
     console.log('handle pick');
     try {
-      const documents = await DocumentPicker.pickMultiple({
+      const documents = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
-      setPickedFiles(documents);
+      setPickedFile(documents[0].uri);
       handleSendMessage();
     } catch (error) {
       console.log(error);
@@ -96,7 +99,7 @@ const ChatBox: React.FC<IProps> = ({currentUserId, receiverId}) => {
         status: userId === currentUserId ? 'sent' : 'received',
         message: message,
         image: clickedImage,
-        files: pickedFiles,
+        file: pickedFile ? pickedFile : '',
       });
     } catch (err) {
       throw new Error('Message not sent');

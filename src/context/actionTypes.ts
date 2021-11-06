@@ -9,13 +9,12 @@ export type Action = {
   };
 };
 
-interface IFiles {
-  filename: string;
-  fileSize: string;
-  height: string;
+export interface IFile {
+  fileCopyUri?: string;
+  name: string;
+  size: string;
   type: string;
   uri: string;
-  width: string;
 }
 
 export interface IUser {
@@ -28,7 +27,7 @@ export interface IMessage {
   receiver: string;
   message: string;
   image: string;
-  files: IFiles[];
+  file: string;
   status: string;
 }
 
